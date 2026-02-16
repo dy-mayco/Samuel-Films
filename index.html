@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineÁudio - Catálogo Imersivo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>CineÁudio</h1>
+        <p class="instrucao">Passe o mouse para ouvir a sinopse. <strong>Clique no quadrado</strong> para ouvir o filme.</p>
+    </header>
+
+    <main class="catalogo">
+        
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme O Som do Silêncio. Clique para reproduzir.">
+            <div>
+                <h2>O Som do Silêncio</h2>
+                <div class="info-texto">
+                    <p><strong>Gênero:</strong> Drama.</p>
+                    <p>A vida de um baterista de heavy-metal muda totalmente quando ele percebe que está perdendo a audição.</p>
+                </div>
+            </div>
+            
+            <audio>
+                <source src="o_som_do_silencio.mp3" type="audio/mpeg">
+            </audio>
+            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+        </article>
+
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Interestelar. Clique para reproduzir.">
+            <div>
+                <h2>Interestelar</h2>
+                <div class="info-texto">
+                    <p><strong>Gênero:</strong> Ficção Científica.</p>
+                    <p>Um grupo de astronautas viaja através de um buraco de minhoca em busca de um novo lar para a humanidade.</p>
+                </div>
+            </div>
+
+            <audio>
+                <source src="interestelar.mp3" type="audio/mpeg">
+            </audio>
+            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+        </article>
+
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Vingadores. Clique para reproduzir.">
+            <div>
+                <h2>Vingadores: Ultimato</h2>
+                <div class="info-texto">
+                    <p><strong>Gênero:</strong> Ação.</p>
+                    <p>Após eventos devastadores, o universo está em ruínas e os heróis precisam se reunir para restaurar a ordem.</p>
+                </div>
+            </div>
+
+            <audio>
+                <source src="vingadores.mp3" type="audio/mpeg">
+            </audio>
+            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+        </article>
+
+    </main>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const cards = document.querySelectorAll('.filme-card');
+
+        // --- Função para a voz do robô (Sinopse) ---
+        function falar(texto) {
+            synth.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(texto);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.1; 
+            synth.speak(utterance);
+        }
+
+        // --- Função para Parar Tudo (Reset) ---
+        function pararTudo() {
+            synth.cancel(); 
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.pause(); 
+            });
+            document.querySelectorAll('.filme-card').forEach(c => {
+                c.classList.remove('tocando'); 
+            });
+        }
+
+        // --- Lógica de Interação ---
+        cards.forEach(card => {
+            const audioFilme = card.querySelector('audio');
+            const titulo = card.querySelector('h2').innerText;
+            const descricao = card.querySelector('.info-texto').innerText;
+            const textoSinopse = `Filme: ${titulo}. ${descricao}`;
+
+            // 1. MOUSE ENTRA
+            card.addEventListener('mouseenter', () => {
+                if (audioFilme.paused) {
+                    card.classList.add('falando'); 
+                    falar(textoSinopse);
+                }
+            });
+
+            // 2. MOUSE SAI
+            card.addEventListener('mouseleave', () => {
+                synth.cancel();
+                card.classList.remove('falando');
+            });
+
+            // 3. CLIQUE
+            card.addEventListener('click', () => {
+                if (!audioFilme.paused) {
+                    audioFilme.pause();
+                    card.classList.remove('tocando');
+                    return;
+                }
+
+                pararTudo(); 
+                audioFilme.currentTime = 0; 
+                audioFilme.play(); 
+                card.classList.add('tocando'); 
+            });
+
+            // Acessibilidade (Teclado)
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+
+        window.onbeforeunload = () => synth.cancel();
+    </script>
+</body>
+</html>
