@@ -9,16 +9,17 @@
 <body>
 
     <header>
-        <h1>
-            <img src="S_films.png" alt="S_films" class="logo-cine">
-            SamuelFilms
-        </h1>
+        <div class="cabecalho-container">
+            <h1 class="logo S_Films"> <img class="logo-site" src="img/S_films.png" alt="Logo Samuel Films"> </h1>
+            <h1>SamuelFilms</h1>
+        </div>
+        
         <p class="instrucao">Passe o mouse para ouvir a sinopse. <strong>Clique no quadrado</strong> para ouvir o som ambiente do filme.</p>
     </header>
 
     <main class="catalogo">
         
-        <article class="filme-card" role="button" tabindex="0" aria-label="Filme O Som do Silêncio. Clique para reproduzir.">
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme O Som do Silêncio. Clique para ouvir o som da bateria.">
             <div>
                 <h2>O Som do Silêncio</h2>
                 <div class="info-texto">
@@ -28,12 +29,12 @@
             </div>
             
             <audio>
-                <source src="o_som_do_silencio.mp3" type="audio/mpeg">
+                <source src="som_bateria.mp3" type="audio/mpeg">
             </audio>
-            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+            <div class="ajuda-clique">(Clique para sentir o som da bateria)</div>
         </article>
 
-        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Interestelar. Clique para reproduzir.">
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Interestelar. Clique para ouvir o som do espaço.">
             <div>
                 <h2>Interestelar</h2>
                 <div class="info-texto">
@@ -43,12 +44,12 @@
             </div>
 
             <audio>
-                <source src="interestelar.mp3" type="audio/mpeg">
+                <source src="som_espaco.mp3" type="audio/mpeg">
             </audio>
-            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+            <div class="ajuda-clique">(Clique para ouvir o som do espaço)</div>
         </article>
 
-        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Vingadores. Clique para reproduzir.">
+        <article class="filme-card" role="button" tabindex="0" aria-label="Filme Vingadores. Clique para ouvir o som da batalha.">
             <div>
                 <h2>Vingadores: Ultimato</h2>
                 <div class="info-texto">
@@ -58,9 +59,9 @@
             </div>
 
             <audio>
-                <source src="vingadores.mp3" type="audio/mpeg">
+                <source src="som_batalha.mp3" type="audio/mpeg">
             </audio>
-            <div class="ajuda-clique">(Clique para ouvir o filme)</div>
+            <div class="ajuda-clique">(Clique para ouvir o som da batalha)</div>
         </article>
 
     </main>
@@ -69,7 +70,7 @@
         const synth = window.speechSynthesis;
         const cards = document.querySelectorAll('.filme-card');
 
-        // --- Função para a voz do robô (Sinopse) ---
+        // --- Função para a voz do robô ---
         function falar(texto) {
             synth.cancel(); 
             const utterance = new SpeechSynthesisUtterance(texto);
@@ -83,13 +84,14 @@
             synth.cancel(); 
             document.querySelectorAll('audio').forEach(audio => {
                 audio.pause(); 
+                audio.currentTime = 0; 
             });
             document.querySelectorAll('.filme-card').forEach(c => {
                 c.classList.remove('tocando'); 
             });
         }
 
-        // --- Lógica de Interação ---
+        // --- Lógica de Interação nos Cards ---
         cards.forEach(card => {
             const audioFilme = card.querySelector('audio');
             const titulo = card.querySelector('h2').innerText;
@@ -119,7 +121,7 @@
                 }
 
                 pararTudo(); 
-                audioFilme.currentTime = 0; 
+                audioFilme.volume = 0.8; 
                 audioFilme.play(); 
                 card.classList.add('tocando'); 
             });
@@ -131,6 +133,15 @@
                     card.click();
                 }
             });
+        });
+
+        // --- NOVA PARTE: INTRODUÇÃO AUTOMÁTICA ---
+        window.addEventListener('load', () => {
+            // setTimeout define o atraso (2000ms = 2 segundos)
+            setTimeout(() => {
+                const textoIntro = "Passe o mouse para ouvir a sinopse. Clique no quadrado para ouvir o som ambiente do filme!!";
+                falar(textoIntro);
+            }, 2000);
         });
 
         window.onbeforeunload = () => synth.cancel();
