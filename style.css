@@ -29,6 +29,20 @@ h1 {
     color: var(--accent-color); 
     font-size: 2.5rem; 
     margin: 0; 
+    
+    /* Configuração Flexbox para alinhar Logo + Texto */
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente na tela */
+    gap: 15px; /* Espaço entre a logo e o texto */
+}
+
+/* --- Estilo da Logo --- */
+.logo-cine {
+    height: 60px; /* Altura da logo */
+    width: auto;  /* Mantém a proporção */
+    border-radius: 50%; /* Deixa a imagem redondinha (opcional) */
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); /* Brilho leve amarelo */
 }
 
 .instrucao { 
